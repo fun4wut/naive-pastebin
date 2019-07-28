@@ -5,9 +5,10 @@ use std::io::Error;
 use crate::utils::time::{now_nano, nano_to_sec, sec_to_nano};
 use crate::domain::record::Record;
 use crate::domain::key::nano_to_key;
+use rocket::State;
 
 /// 传递一个Result，这里偷懒，Error直接用字符串了
-pub fn save_record(store_lock: StoreLock, dto: SaveReq) -> Result<SaveRes, String> {
+pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq) -> Result<SaveRes, String> {
     if dto.expiration > *MAX_EXPIRATION {
         return Err(format!("过期时间超出最大值！最大值为：{}", *MAX_EXPIRATION));
     }

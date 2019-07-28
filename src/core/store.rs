@@ -42,7 +42,7 @@ impl<K, V> Store<K, V>
         let item = StoreItem::new(value);
 
         // 确保Store的最大容量能容纳这个item
-        if item.size <= self.max_value_size {
+        if item.size >= self.max_value_size {
             return Err("内容太大，无法存入！".into());
         }
 

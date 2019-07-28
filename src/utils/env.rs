@@ -14,7 +14,8 @@ use std::env;
 use super::time::*;
 
 // 默认的服务地址
-const DEFAULT_ADDR: &'static str = "localhost:8088";
+const DEFAULT_ADDR: &'static str = "localhost";
+
 // 默认的短网址加密密钥
 const DEFAULT_CRYPT_KEY: &'static str = "fun4wut";
 
@@ -33,6 +34,7 @@ lazy_static! {
     pub static ref MAX_EXPIRATION: SecTime = { parse("PASTEBIN_MAX_EXPIRATION", 7 * 24 * 60 * 60) };
     pub static ref CLEAN_DURATION: u64 = { parse("PASTEBIN_CLEAN_DURATION", 5000) };
     pub static ref ADDR: String = { env::var("PASTEBIN_ADDR").unwrap_or(DEFAULT_ADDR.into()) };
+    pub static ref PORT: u16 = {parse("PASTEBIN_PORT", 8008)};
     pub static ref CRYPT_KEY: String =
         { env::var("PASTEBIN_CRYPT_KEY").unwrap_or(DEFAULT_CRYPT_KEY.into()) };
 }
@@ -43,4 +45,5 @@ pub fn info_env() {
     info!("MAX_EXPIRATION: {} s", *MAX_EXPIRATION);
     info!("CLEAN_DURATION: {} ms", *CLEAN_DURATION);
     info!("MAX_POST_SIZE: {} bytes", *MAX_POST_SIZE);
+    info!("SERVICE_ADDRESS: {}:{}", *ADDR, *PORT);
 }
