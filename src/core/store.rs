@@ -4,6 +4,7 @@ use linked_hash_map::LinkedHashMap;
 use std::collections::BTreeMap;
 use crate::utils::time::{NanoTime, sec_to_nano};
 use std::collections::btree_map::Entry;
+use crate::utils::error::StoreError;
 
 /// 存储结构
 /// Value需要实现两个Trait
@@ -38,12 +39,12 @@ impl<K, V> Store<K, V>
     }
 
     /// 存储 `K,V` 键值对
-    pub fn save(&mut self, key: K, value: V) -> Result<(), String> {
+    pub fn save(&mut self, key: K, value: V) -> Result<(), StoreError> {
         let item = StoreItem::new(value);
 
         // 确保Store的最大容量能容纳这个item
         if item.size >= self.max_value_size {
-            return Err("内容太大，无法存入！".into());
+            return Err(StoreError::TooBigRecErr);
         }
 
         // LRU淘汰掉老item，直到有空间来存放item

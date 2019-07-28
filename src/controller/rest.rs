@@ -10,7 +10,7 @@ type Res<T> = Json<ResDTO<T>>;
 pub fn save(state: State<StoreLock>, req: Json<SaveReq>) -> Res<SaveRes> {
     let dto = match save_record(state, req.0) {
         Ok(res) => ResDTO::success(res),
-        Err(e) => ResDTO::error().with_msg(e)
+        Err(e) => ResDTO::error().with_msg(e.to_string())
     };
     Json(dto)
 }
@@ -19,7 +19,7 @@ pub fn save(state: State<StoreLock>, req: Json<SaveReq>) -> Res<SaveRes> {
 pub fn find(key: String, state: State<StoreLock>) -> Res<FindRes> {
     let dto = match find_record(state, key) {
         Ok(res) => ResDTO::success(res),
-        Err(_) => ResDTO::error().with_msg("未找到内容！".into())
+        Err(e) => ResDTO::error().with_msg(e.to_string())
     };
     Json(dto)
 }

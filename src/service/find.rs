@@ -1,13 +1,16 @@
 use crate::core::StoreLock;
 use crate::domain::key::key_to_nano;
 use crate::dto::FindRes;
-use std::error::Error;
 use std::option::NoneError;
 use rocket::State;
+use std::error::Error;
+use crate::utils::error::StoreError;
 
 
-/// 从store中找到
-pub fn find_record(store_lock: State<StoreLock>, key: String) -> Result<FindRes, NoneError> {
+/// 从store中找到。
+///
+/// 因为 `StoreError` 实现了 `From<NoneError>`，所以可以使用 `?` 进行错误传播
+pub fn find_record(store_lock: State<StoreLock>, key: String) -> Result<FindRes, StoreError> {
     let nano = key_to_nano(&key)?;
     // write store
     // assert: store_lock.write never returns Err or paincs

@@ -19,7 +19,6 @@ extern crate rocket;
 
 use crate::utils::env::info_env;
 use server::rocket;
-use std::path::PathBuf;
 
 /// init, start server
 fn main() {
