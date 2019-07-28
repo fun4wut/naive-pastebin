@@ -1,47 +1,9 @@
-use std::time::{SystemTime, UNIX_EPOCH};
-use crate::{time::*};
 use std::hash::Hash;
+use crate::core::store_item::{LruValueSize, WithDeadTime, StoreItem};
 use linked_hash_map::LinkedHashMap;
-use std::collections::btree_map::{BTreeMap, Entry};
-use core::borrow::{BorrowMut, Borrow};
-
-/// 获取Value的大小
-pub trait LruValueSize {
-    fn lru_value_size(&self) -> usize;
-}
-
-/// 过期时间
-pub trait WithDeadTime {
-    fn dead_time(&self) -> NanoTime;
-}
-
-/// 对Value实现的一个包装
-/// V要实现 `LruValueSize`
-pub struct StoreItem<V>
-    where
-        V: LruValueSize
-{
-    /// Value的值
-    pub value: V,
-    /// Value的被访问次数
-    pub access_count: u64,
-    /// Value的大小
-    pub size: usize,
-}
-
-impl<V> StoreItem<V>
-    where
-        V: LruValueSize
-{
-    fn new(value: V) -> Self {
-        let size = value.lru_value_size();
-        Self {
-            value,
-            access_count: 0,
-            size,
-        }
-    }
-}
+use std::collections::BTreeMap;
+use crate::utils::time::{NanoTime, sec_to_nano};
+use std::collections::btree_map::Entry;
 
 /// 存储结构
 /// Value需要实现两个Trait
@@ -76,11 +38,13 @@ impl<K, V> Store<K, V>
     }
 
     /// 存储 `K,V` 键值对
-    pub fn save(&mut self, key: K, value: V) {
+    pub fn save(&mut self, key: K, value: V) -> Result<(), String> {
         let item = StoreItem::new(value);
 
-        // TODO: 完善错误处理
-        assert!(item.size <= self.max_value_size); // 确保Store的最大容量能容纳这个item
+        // 确保Store的最大容量能容纳这个item
+        if item.size <= self.max_value_size {
+            return Err("内容太大，无法存入！".into());
+        }
 
         // LRU淘汰掉老item，直到有空间来存放item
         while self.max_value_size - self.total_value_size < item.size {
@@ -103,6 +67,7 @@ impl<K, V> Store<K, V>
         }
         // 存放至LRU
         self.map.insert(key, item);
+        Ok(())
     }
 
     /// 根据key来访问
@@ -155,4 +120,3 @@ impl<K, V> Store<K, V>
         self.map.shrink_to_fit()
     }
 }
-
