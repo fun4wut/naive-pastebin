@@ -6,10 +6,96 @@
 
 目前只有REST API。
 
+## 部署
+
+```bash
+$ cargo build -- release
+$ ./target/release/naive-pastebin
+```
+
+
+
+### 环境变量
+
+Prefix: `PASTEBIN_`
+
+Shared Variable
+
+| var           | default   | unit | description                     |
+| ------------- | --------- | ---- | ------------------------------- |
+| ADDR          | localhost |      | Binding address                 |
+| PORT          | 8085      |      | Binding port                    |
+| CRYPT_KEY     | fun4wut   |      | Crypto key for short url        |
+| MAX_POST_SIZE | 32768     | byte | Max length of POST request body |
+
+Built-in Memory Store
+
+| var            | default   | unit        | description                                                 |
+| -------------- | --------- | ----------- | ----------------------------------------------------------- |
+| MAX_STORE_SIZE | 104857600 | byte        | An ambiguous size count for controlling server memory usage |
+| MAX_EXPIRATION | 604800    | second      | Max expiration time                                         |
+| CLEAN_DURATION | 5000      | millisecond | GC interval                                                 |
+
+
+
+## API
+
+### 存储
+
+1. Request
+
+    ```http request
+    POST /api/save
+    ```
+    
+    ```typescript
+    interface Request {
+        title: string,
+        lang: string,
+        content: string,
+        expiration: number, // 秒数
+    }
+    ```
+
+2. Response
+
+    ```typescript
+    interface Response {
+        code: number,
+        msg: string,
+        data: {
+            key: string
+        }
+    }
+    ```
+
+### 查找
+
+1. Request
+
+    ```http request
+    GET /api/find/<key>
+    ```
+    
+2. Response
+    ```typescript
+    interface Response {
+       code: number,
+       msg: string,
+       data: {
+            title: string,
+            lang: string,
+            content: string,
+            saving_time: number,
+            expiration: number,
+            view_count: number
+       }
+    }
+    ```
+
 ## TODO
 
-- [ ] 懒加载实现机制
-- [ ] 单元测试
+- [x] 单元测试
 - [ ] 完善 `logger`
 - [ ] Web界面
 - [ ] 管理员用的API
