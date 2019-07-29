@@ -38,5 +38,37 @@ impl<V> StoreItem<V>
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use crate::utils::time::NanoTime;
+    use crate::core::{LruValueSize, WithDeadTime};
+    use crate::core::store_item::StoreItem;
 
+    struct Foo {
+        size: usize,
+        time: NanoTime,
+    }
+
+    impl LruValueSize for Foo {
+        fn lru_value_size(&self) -> usize {
+            self.size
+        }
+    }
+
+    impl WithDeadTime for Foo {
+        fn dead_time(&self) -> u128 {
+            self.time
+        }
+    }
+
+    #[test]
+    fn test_store_item() {
+        let item = StoreItem::new(Foo {
+            time: 2000,
+            size: 500,
+        });
+        assert_eq!(item.value.dead_time(), 2000);
+        assert_eq!(item.value.lru_value_size(), 500);
+    }
+}
 

@@ -80,7 +80,7 @@ impl<K, V> Store<K, V>
 
     /// 清洗过期的item，返回被清洗的item数量
     pub fn clean(&mut self, now: NanoTime) -> usize {
-        // 分割过期列表, 过期时间大于当前时间的不会被清除
+        // 分割过期列表, 过期时间大于等于当前时间的不会被清除
         let right = self.queue.split_off(&now);
         let count = self.queue.len();
         let mut delta = 0;
@@ -119,5 +119,63 @@ impl<K, V> Store<K, V>
     /// 把LRU收缩到合适的大小
     pub fn shrink(&mut self) {
         self.map.shrink_to_fit()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::core::{LruValueSize, WithDeadTime};
+    use super::*;
+    use crate::utils::time::now_nano;
+    use std::thread::sleep;
+
+    #[derive(PartialEq, Clone, Debug)]
+    struct Bar { t: NanoTime }
+
+    impl LruValueSize for Bar {
+        fn lru_value_size(&self) -> usize {
+            50
+        }
+    }
+
+    impl WithDeadTime for Bar {
+        fn dead_time(&self) -> NanoTime {
+            self.t
+        }
+    }
+
+
+    #[test]
+    fn test_save() {
+        let mut store: Store<usize, Bar> = Store::new(2000);
+        for i in 0..50 {
+            store.save(i, Bar { t: i as NanoTime }).expect("插入失败");
+        }
+        assert_eq!(store.map.len(), 40);
+        assert_eq!(store.queue.len(), 40);
+        assert_eq!(store.total_value_size(), 2000);
+    }
+
+    #[test]
+    fn test_access() {
+        let mut store: Store<usize, Bar> = Store::new(2000);
+        let v = Bar { t: 20 as NanoTime };
+        let u = v.clone();
+        store.save(20, v).unwrap();
+        assert_eq!(store.access(20).unwrap().value, u);
+        assert!(store.access(30).is_none());
+    }
+
+    #[test]
+    fn test_clean() {
+        let mut store: Store<NanoTime, Bar> = Store::new(2000);
+        let now = now_nano();
+        for i in 0..60 {
+            store.save(i, Bar { t: now + i });
+        }
+        assert!(store.needs_clean(now + 62));
+        let num = store.clean(now + 30);
+        // 总容量只有40，所以前20个被LRU淘汰。
+        assert_eq!(num, 10);
     }
 }

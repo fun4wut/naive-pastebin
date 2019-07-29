@@ -20,3 +20,4 @@ pub const fn sec_to_nano(sec: SecTime) -> NanoTime {
 pub const fn nano_to_sec(nano: NanoTime) -> SecTime {
     (nano / 1_000_000_000) as SecTime
 }
+
