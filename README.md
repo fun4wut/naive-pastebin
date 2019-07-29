@@ -96,10 +96,14 @@ Built-in Memory Store
 ## TODO
 
 - [x] 单元测试
-- [ ] 完善 `logger`
-- [ ] Web界面
-- [ ] 管理员用的API
 - [x] 健壮的Error机制
+- [ ] Web界面
+- [ ] 以 `iframe` / `js脚本` 形式嵌入【参照 <https://pastebin.com/>】
+- [ ] `raw` 字符串显示
+- [ ] 历史版本显示
+- [ ] 代码高亮
+- [ ] 数据备份
+- [ ] 编辑/删除功能【使用一个密钥来验证，密钥只会在新建时出现，保存在浏览器 `localStorage` 中】
 
 
 
