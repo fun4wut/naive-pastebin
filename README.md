@@ -45,15 +45,13 @@ Built-in Memory Store
 1. Request
 
     ```http request
-    POST /api/save
+    POST /api/save?<title>&[exp]
     ```
+    > exp为过期时间，单位为秒，最长不超过7天，默认为7天
     
     ```typescript
     interface Request {
-        title: string,
-        lang: string,
         content: string,
-        expiration: number, // 秒数
     }
     ```
 
@@ -92,6 +90,12 @@ Built-in Memory Store
        }
     }
     ```
+    
+### 直接返回 `raw`
+
+```http request
+GET /raw/<key>
+```
 
 ## TODO
 
