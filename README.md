@@ -103,7 +103,7 @@ GET /raw/<key>
 - [x] 健壮的Error机制
 - [x] 考虑对命令行用户的友好度
 - [ ] Web界面
-- [ ] 以 `iframe` / `js脚本` 形式嵌入【参照 <https://pastebin.com/>】
+- [x] 以 `iframe` / `js脚本` 形式嵌入【参照 <https://pastebin.com/>】
 - [ ] 代码高亮【前端渲染/后端渲染。网页高亮/命令行高亮】
 - [x] `raw` 字符串显示
 - [ ] 历史版本显示

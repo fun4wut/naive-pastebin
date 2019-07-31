@@ -20,4 +20,4 @@ rocket = "0.4.2"
 [dependencies.rocket_contrib]
 version = "0.4.2"
 default-features = false
-features = ["json"] # 打开JSON自动序列化/反序列化支持
+features = ["json", "serve"] # 打开JSON自动序列化/反序列化支持

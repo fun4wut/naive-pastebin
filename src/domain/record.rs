@@ -22,6 +22,10 @@ impl Record {
             vec.last().unwrap().clone()
         }
     }
+    pub fn escape(&self) -> String {
+        self.content.replace("<", "&lt;")
+            .replace(">", "&gt;")
+    }
 }
 
 impl LruValueSize for Record {

@@ -10,16 +10,18 @@ pub fn gen_embed(state: State<StoreLock>, key: String) -> Result<String, StoreEr
     let nano = key_to_nano(&key)?;
     let item = store.access(nano)?;
 
+    // 字符串手撕，暴力而丑陋
     let res = format!("document.write(`
-    <link href=\"http://apps.bdimg.com/libs/highlight.js/9.1.0/styles/default.min.css\" rel=\"stylesheet\">
-    <script src=\"http://apps.bdimg.com/libs/highlight.js/9.1.0/highlight.min.js\"></script>
-    <pre><code class=\"{}\">{}</code></pre>
+    <link rel=\"stylesheet\" href=\"/static/css/prism.css\">
+    <script src=\"/static/js/prism.js\"></script>
+    <div class=\"panel\">
+    <pre class=\"line-numbers\"><code class=\"lang-{}\">{}</code></pre>
     <div class=\"meta\">
-    <a href=\"\" style=\"float:right\">view raw</a>
+    <a href=\"/raw/{}/{}\" style=\"float:right\">view raw</a>
     <a href=\"\">{}</a>
-    hosted with ❤ by <a href=\"https://github.com\">GitHub</a>
+    hosted with ❤ by <a href=\"https://blog.fun4go.top\">番茄瓜皮</a>
     </div>
-    <script>hljs.initHighlightingOnLoad();</script>
-    `)", item.value.lang(), item.value.content.clone(), item.value.title.clone());
+    </div>
+    `)", item.value.lang(), item.value.escape(), key, item.value.title.clone(), item.value.title.clone());
     Ok(res)
 }
