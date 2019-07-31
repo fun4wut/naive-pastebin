@@ -19,7 +19,6 @@ pub fn find_record(store_lock: State<StoreLock>, key: String) -> Result<FindRes,
     // 构造Response
     let resp = FindRes {
         title: item.value.title.clone(),
-        lang: item.value.lang.clone(),
         content: item.value.content.clone(),
         saving_time: item.value.saving_time,
         expiration: item.value.expiration,

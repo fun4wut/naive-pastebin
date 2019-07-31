@@ -20,7 +20,6 @@ pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq) -> Result<SaveRes
         expiration: dto.expiration,
         saving_time,
         dead_time,
-        lang: dto.lang,
         title: dto.title,
         content: dto.content,
     };

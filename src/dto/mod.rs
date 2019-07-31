@@ -8,13 +8,12 @@ use serde::{Serialize, Deserialize};
 pub struct SaveReq {
     /// 标题
     pub title: String,
-    /// 语言
-    pub lang: String,
     /// 内容
     pub content: String,
     /// 过期时间
     pub expiration: SecTime,
 }
+
 
 /// 返回的JSON，包装的最外层对象
 #[derive(Serialize)]
@@ -58,7 +57,6 @@ pub struct SaveRes {
 #[derive(Serialize)]
 pub struct FindRes {
     pub title: String,
-    pub lang: String,
     pub content: String,
     pub saving_time: SecTime,
     pub expiration: SecTime,
