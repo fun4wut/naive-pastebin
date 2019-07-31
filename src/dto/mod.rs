@@ -6,12 +6,8 @@ use serde::{Serialize, Deserialize};
 /// 保存文件的JSON请求
 #[derive(Serialize, Deserialize)]
 pub struct SaveReq {
-    /// 标题
-    pub title: String,
     /// 内容
     pub content: String,
-    /// 过期时间
-    pub expiration: SecTime,
 }
 
 
