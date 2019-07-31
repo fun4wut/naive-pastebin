@@ -13,6 +13,17 @@ pub struct Record {
     pub dead_time: NanoTime,
 }
 
+impl Record {
+    pub fn lang(&self) -> &str {
+        let vec: Vec<&str> = self.title.split('.').collect();
+        if vec.len() == 1 {
+            ""
+        } else {
+            vec.last().unwrap().clone()
+        }
+    }
+}
+
 impl LruValueSize for Record {
     fn lru_value_size(&self) -> usize {
         // 自身的栈大小+堆上分配内存的大小

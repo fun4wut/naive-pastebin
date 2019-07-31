@@ -1,4 +1,4 @@
-#![allow(dead_code, unused_variables)]
+//#![allow(dead_code, unused_variables)]
 #![feature(proc_macro_hygiene, decl_macro)]
 #![feature(try_trait)]
 

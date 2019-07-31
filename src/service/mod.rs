@@ -4,7 +4,8 @@
 mod task;
 mod save;
 mod find;
-
+mod embed;
 pub use save::save_record;
 pub use find::find_record;
 pub use task::gc_loop;
+pub use embed::gen_embed;
