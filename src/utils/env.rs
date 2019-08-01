@@ -11,6 +11,8 @@
 //! PORT: 8085
 //!
 //! CRYPT_KEY: "magic"
+//!
+//! DOMAIN: `ADDR:PORT`
 use std::str::FromStr;
 use std::env;
 use super::time::*;
@@ -39,6 +41,7 @@ lazy_static! {
     pub static ref PORT: u16 = {parse("PASTEBIN_PORT", 8085)};
     pub static ref CRYPT_KEY: String =
         { env::var("PASTEBIN_CRYPT_KEY").unwrap_or(DEFAULT_CRYPT_KEY.into()) };
+    pub static ref DOMAIN: String = {env::var("PASTEBIN_DOMAIN").unwrap_or(format!("{}:{}", *ADDR, *PORT))};
 }
 
 /// 打印环境变量
@@ -47,5 +50,5 @@ pub fn info_env() {
     info!("MAX_EXPIRATION: {} s", *MAX_EXPIRATION);
     info!("CLEAN_DURATION: {} ms", *CLEAN_DURATION);
     info!("MAX_POST_SIZE: {} bytes", *MAX_POST_SIZE);
-    info!("SERVICE_ADDRESS: {}:{}", *ADDR, *PORT);
+    info!("SERVICE_ADDRESS: {}", *DOMAIN);
 }

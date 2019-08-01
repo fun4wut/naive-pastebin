@@ -2,7 +2,7 @@ use rocket::State;
 use crate::core::StoreLock;
 use crate::utils::error::StoreError;
 use crate::domain::key::key_to_nano;
-
+use crate::utils::env::*;
 /// 生成嵌入的JS代码
 pub fn gen_embed(state: State<StoreLock>, key: String) -> Result<String, StoreError> {
     let mut store = state.write().unwrap();
@@ -12,8 +12,8 @@ pub fn gen_embed(state: State<StoreLock>, key: String) -> Result<String, StoreEr
 
     // 字符串手撕，暴力而丑陋
     let res = format!("document.write(`
-    <link rel=\"stylesheet\" href=\"/static/css/prism.css\">
-    <script src=\"/static/js/prism.js\"></script>
+    <link rel=\"stylesheet\" href=\"http://{}/static/css/prism.css\">
+    <script src=\"http://{}/static/js/prism.js\"></script>
     <div class=\"panel\">
     <pre class=\"line-numbers\"><code class=\"lang-{}\">{}</code></pre>
     <div class=\"meta\">
@@ -22,6 +22,6 @@ pub fn gen_embed(state: State<StoreLock>, key: String) -> Result<String, StoreEr
     hosted with ❤ by <a href=\"https://blog.fun4go.top\">番茄瓜皮</a>
     </div>
     </div>
-    `)", item.value.lang(), item.value.escape(), key, item.value.title.clone(), item.value.title.clone());
+    `)", *DOMAIN, *DOMAIN, item.value.lang(), item.value.escape(), key, item.value.title.clone(), item.value.title.clone());
     Ok(res)
 }
