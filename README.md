@@ -27,6 +27,7 @@ Shared Variable
 | PORT          | 8085      |      | Binding port                    |
 | CRYPT_KEY     | fun4wut   |      | Crypto key for short url        |
 | MAX_POST_SIZE | 32768     | byte | Max length of POST request body |
+| DOMAIN        | $ADDR:$PORT |    | Domain Where you deploy
 
 Built-in Memory Store
 

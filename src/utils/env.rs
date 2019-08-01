@@ -10,7 +10,7 @@
 //!
 //! PORT: 8085
 //!
-//! CRYPT_KEY: "magic"
+//! CRYPT_KEY: "fun4wut"
 //!
 //! DOMAIN: `ADDR:PORT`
 use std::str::FromStr;
