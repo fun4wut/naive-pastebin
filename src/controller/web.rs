@@ -3,6 +3,12 @@ use crate::core::StoreLock;
 use rocket::http::{ContentType, Status};
 use crate::service::gen_embed;
 use std::io::Cursor;
+use rocket_contrib::templates::{Template};
+use crate::dto::SaveRes;
+use crate::utils::env::*;
+use serde::Serialize;
+use rocket::request::Form;
+use crate::utils::time::SecTime;
 
 #[get("/embed/<key>")]
 pub fn show_embed(state: State<StoreLock>, key: String) -> Response {
@@ -13,4 +19,22 @@ pub fn show_embed(state: State<StoreLock>, key: String) -> Response {
         Err(_) => res.set_status(Status::NotFound)
     };
     res
+}
+
+#[derive(Serialize)]
+struct Index<'a> {
+    domain: &'a str
+}
+
+#[get("/")]
+pub fn index() -> Template {
+    let context = Index { domain: &*DOMAIN };
+    Template::render("index", &context)
+}
+
+#[derive(FromForm)]
+struct SaveForm {
+    title: String,
+    exp: SecTime,
+    content: String,
 }

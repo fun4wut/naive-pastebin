@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+        name="viewport">
+  <meta content="ie=edge" http-equiv="X-UA-Compatible">
+  <title>Fun4Paste</title>
+  <link href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" rel="stylesheet">
+</head>
+
+<body>
+<!-- header -->
+<div class="ui large top menu">
+  <div class="ui container">
+    <div class="item">
+      <img alt="" src="https://gofun4-pic.oss-cn-hangzhou.aliyuncs.com/18-8-29/83907422.jpg">
+    </div>
+    <a class="item" href="{{domain}}">Fun4Paste</a>
+    <div class="right menu">
+      <div class="item">
+        <a class="ui primary button" href="https://github.com/fun4wut/naive-pastebin">Fork me</a>
+      </div>
+      <div class="item">
+        <a class="ui button" href="https://blog.fun4go.top">My Blog</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ui container">
+  <h1 class="ui header">New paste</h1>
+  <h2 class="ui header">Create a new paste</h2>
+  <div class="ui divider"></div>
+  <div class="ui form">
+    <div class="fields">
+      <div class="twelve wide field">
+        <label>Paste title(with extension)</label>
+        <input id="title" placeholder="title" type="text">
+      </div>
+      <div class="four wide field">
+        <label>Expires</label>
+        <select id="exp" name="exp">
+          <option value="3600">1 hour</option>
+          <option value="7200">2 hour</option>
+          <option value="18000">5 hour</option>
+          <option value="43200">12 hour</option>
+          <option selected value="86400">1 day</option>
+          <option value="259200">3 day</option>
+          <option value="432000">5 day</option>
+          <option value="604800">7 day</option>
+        </select>
+      </div>
+      <br>
+    </div>
+    <div class="field">
+      <pre id="compile-editor"></pre>
+    </div>
+    <div class="ui success message">
+      <div class="header">Succeed!</div>
+      <p>A new paste has been created.</p>
+    </div>
+    <button class="ui huge primary button" onclick="ajax()">Submit</button>
+  </div>
+</div>
+
+<!--footer-->
+<footer class="ui inverted vertical footer segment" style="margin-top: 20px">
+  <div class="ui container">
+    <div class="ui stackable inverted divided equal height stackable grid">
+      <div class="three wide column">
+        <h4 class="ui inverted header">About</h4>
+        <div class="ui inverted link list">
+          <a class="item" href="https://github.com/fun4wut">GitHub</a>
+          <a class="item" href="https://blog.fun4go.top">Blog</a>
+        </div>
+      </div>
+      <div class="seven wide column">
+        <h4 class="ui inverted header">Extra</h4>
+        <p>@2019 Fun4wut</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+</body>
+<script crossorigin="anonymous" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+<script src="https://semantic-ui.com/javascript/library/tablesort.js"></script>
+<script crossorigin="anonymous" integrity="sha256-5Xkhn3k/1rbXB+Q/DX/2RuAtaB4dRRyQvMs83prFjpM="
+        src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.5/ace.js"></script>
+<script>
+  $("#compile-editor").width($(".container").width);
+  $("#compile-editor").height(400);
+  var editor = ace.edit("compile-editor", {
+    theme: "ace/theme/solarized_light",
+    fontSize: 18,
+    maxLines: 25,
+    minLines: 25,
+    wrap: true,
+    theme: "ace/theme/solarized_light"
+  });
+  editor.resize();
+
+  function ajax() {
+    const title = $("#title").val();
+    const exp = $("#exp").val();
+    fetch(`/api/save?title=${title}&exp=${exp}`, {
+      method: "POST",
+      body: JSON.stringify({
+        content: editor.getValue()
+      }),
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    })
+      .then(res => res.json())
+      .then(json => {
+        if (json.code == 0) alert("Success");
+        window.location.href = "/"
+      })
+  }
+</script>
+</html>
