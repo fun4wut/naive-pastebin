@@ -32,8 +32,25 @@
 </div>
 
 <div class="ui container Site-content">
-  <h1 class="ui header">Watch Paste</h1>
-  <h2 class="ui header">{{rec.title}}</h2>
+  <h1 class="ui header">{{rec.title}}</h1>
+  <h4 class="ui header">Iframe Embedding (you can set the frame height by adding the CSS value 'height:100px;' for
+    example)</h4>
+  <div class="ui action input fluid" style="margin-bottom: 30px">
+    <input
+      readonly
+      type="text"
+      value='<iframe src="http://{{domain}}/embed_iframe/{{key}}" style="border:none;width:100%"></iframe>'
+    >
+    <button class="ui teal right labeled icon button" id="btn">
+      <i class="copy icon"></i>
+      Copy
+    </button>
+  </div>
+  <div class="ui positive message hidden" id="copymsg">
+    <i class="close icon"></i>
+    <div class="header">Successful copy!</div>
+    <p>Now you can <b>embed your code</b>into your site</p>
+  </div>
   <div class="panel">
     <pre><code>{{rec.content}}</code></pre>
     <div class="meta">
@@ -73,5 +90,17 @@
 <script>
   hljs.initHighlightingOnLoad();
   hljs.initLineNumbersOnLoad();
+  $("#btn").click(() => {
+    $("input").select();
+    if (document.execCommand("copy")) {
+      $("#copymsg").removeClass("hidden")
+    }
+  });
+  $('.message .close')
+    .on('click', function () {
+      $(this)
+        .closest('.message')
+        .transition('fade');
+    });
 </script>
 </html>

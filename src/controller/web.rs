@@ -49,3 +49,18 @@ pub fn show_record(state: State<StoreLock>, key: String) -> Option<Template> {
         Err(_) => None
     }
 }
+
+#[get("/embed_iframe/<key>")]
+pub fn show_embed_iframe(state: State<StoreLock>, key: String) -> Option<Template> {
+    let clone = key.clone();
+    match find_record(state, key) {
+        Ok(res) => {
+            Some(Template::render("embed", &Show {
+                rec: &res,
+                key: clone,
+                domain: &*DOMAIN,
+            }))
+        },
+        Err(_) => None
+    }
+}

@@ -42,3 +42,7 @@
 pre {
     margin: 0;
 }
+
+code {
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+}

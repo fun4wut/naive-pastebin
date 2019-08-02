@@ -19,7 +19,7 @@ pub fn rocket() -> Result<rocket::Rocket, Box<dyn Error>> {
     Ok(rocket::custom(cfg)
         .manage(store_lock)
         .attach(Template::fairing())
-        .mount("/", routes![show_embed, index, show_record])
+        .mount("/", routes![show_embed, index, show_record, show_embed_iframe])
         .mount("/api", routes![find,save])
         .mount("/raw", routes![raw_find])
         // serve static files
