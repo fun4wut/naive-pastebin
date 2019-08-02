@@ -29,22 +29,7 @@ blue      #268bd2
 cyan      #2aa198
 green     #859900
 */
-.meta {
-    background-color: #f7f7f7;
-    border-radius: 0 0 2px 2px;
-    color: #586069;
-    font: 12px -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
-    overflow: hidden;
-    padding: 10px;
-}
 
-.panel {
-    border: 1px solid;
-    border-color: #ddd #ddd #ccc;
-    border-radius: 3px;
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
-    margin-bottom: 1em;
-}
 
 code[class*="language-"],
 pre[class*="language-"] {

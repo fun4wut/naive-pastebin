@@ -7,16 +7,17 @@
   <meta content="ie=edge" http-equiv="X-UA-Compatible">
   <title>Fun4Paste</title>
   <link href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" rel="stylesheet">
+  <link href="/static/css/custom.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="Site">
 <!-- header -->
 <div class="ui large top menu">
   <div class="ui container">
     <div class="item">
       <img alt="" src="https://gofun4-pic.oss-cn-hangzhou.aliyuncs.com/18-8-29/83907422.jpg">
     </div>
-    <a class="item" href="{{domain}}">Fun4Paste</a>
+    <a class="item" href="/">Fun4Paste</a>
     <div class="right menu">
       <div class="item">
         <a class="ui primary button" href="https://github.com/fun4wut/naive-pastebin">Fork me</a>
@@ -28,7 +29,7 @@
   </div>
 </div>
 
-<div class="ui container">
+<div class="ui container Site-content">
   <h1 class="ui header">New paste</h1>
   <h2 class="ui header">Create a new paste</h2>
   <div class="ui divider"></div>
@@ -60,7 +61,7 @@
       <div class="header">Succeed!</div>
       <p>A new paste has been created.</p>
     </div>
-    <button class="ui huge primary button" onclick="ajax()">Submit</button>
+    <button class="ui huge primary button" id="btn">Submit</button>
   </div>
 </div>
 
@@ -87,23 +88,35 @@
 </body>
 <script crossorigin="anonymous" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
-<script src="https://semantic-ui.com/javascript/library/tablesort.js"></script>
 <script crossorigin="anonymous" integrity="sha256-5Xkhn3k/1rbXB+Q/DX/2RuAtaB4dRRyQvMs83prFjpM="
         src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.5/ace.js"></script>
+<script crossorigin="anonymous" integrity="sha256-Eq83mfVraqpouXYtwjYSEvTt6JM7k1VrhsebwRs06AM="
+        src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.5/ext-modelist.js"></script>
 <script>
+
   $("#compile-editor").width($(".container").width);
   $("#compile-editor").height(400);
-  var editor = ace.edit("compile-editor", {
+  const editor = ace.edit("compile-editor", {
     theme: "ace/theme/solarized_light",
     fontSize: 18,
-    maxLines: 25,
-    minLines: 25,
+    maxLines: 23,
+    minLines: 23,
     wrap: true,
     theme: "ace/theme/solarized_light"
   });
-  editor.resize();
 
-  function ajax() {
+  // defualt mode is js
+  const modelist = ace.require("ace/ext/modelist");
+  let filePath = "blahblah/weee/some.js";
+  const mode = modelist.getModeForPath(filePath).mode;
+  editor.session.setMode(mode);
+
+  $("#title").change(e => {
+    filePath = e.target.value;
+    editor.session.setMode(modelist.getModeForPath(filePath).mode);
+  });
+
+  $("#btn").click(() => {
     const title = $("#title").val();
     const exp = $("#exp").val();
     fetch(`/api/save?title=${title}&exp=${exp}`, {
@@ -117,9 +130,11 @@
     })
       .then(res => res.json())
       .then(json => {
-        if (json.code == 0) alert("Success");
-        window.location.href = "/"
+        if (json.code == 0) {
+          // success
+          window.location.href = `/show/${json.data.key}`
+        }
       })
-  }
+  })
 </script>
 </html>

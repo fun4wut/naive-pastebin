@@ -12,16 +12,26 @@ pub fn gen_embed(state: State<StoreLock>, key: String) -> Result<String, StoreEr
 
     // 字符串手撕，暴力而丑陋
     let res = format!("document.write(`
-    <link rel=\"stylesheet\" href=\"http://{}/static/css/prism.css\">
-    <script src=\"http://{}/static/js/prism.js\"></script>
+    <link rel=\"stylesheet\" href=\"http://{}/static/css/embed.css\">
+    <script src=\"http://{}/static/js/highlight.pack.js\"></script>
+    <script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.7.0/highlightjs-line-numbers.min.js\"></script>
     <div class=\"panel\">
-    <pre class=\"line-numbers\"><code class=\"lang-{}\">{}</code></pre>
+    <pre><code>{}</code></pre>
     <div class=\"meta\">
-    <a href=\"/raw/{}/{}\" style=\"float:right\">view raw</a>
-    <a href=\"\">{}</a>
+    <a href=\"http://{}/raw/{}/{}\" style=\"float:right\">view raw</a>
+    <a href=\"http://{}/show/{}\">{}</a>
     hosted with ❤ by <a href=\"https://blog.fun4go.top\">番茄瓜皮</a>
     </div>
     </div>
-    `)", *DOMAIN, *DOMAIN, item.value.lang(), item.value.escape(), key, item.value.title.clone(), item.value.title.clone());
+    <script>
+      hljs.initHighlightingOnLoad();
+      hljs.initLineNumbersOnLoad();
+    </script>
+    `)",
+                      *DOMAIN,
+                      *DOMAIN,
+                      item.value.escape(),
+                      *DOMAIN, &key, &item.value.title,
+                      *DOMAIN, &key, &item.value.title);
     Ok(res)
 }

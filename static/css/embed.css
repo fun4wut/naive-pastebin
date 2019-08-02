@@ -1,0 +1,44 @@
+.meta {
+    background-color: #f7f7f7;
+    border-radius: 0 0 2px 2px;
+    color: #586069;
+    font: 12px -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.panel {
+    border: 1px solid;
+    border-color: #ddd #ddd #ccc;
+    border-radius: 3px;
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+    margin-bottom: 1em;
+}
+
+/* for block of numbers */
+.hljs-ln-numbers {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    text-align: center;
+    color: #ccc;
+    border-right: 1px solid #CCC;
+    vertical-align: top;
+    padding-right: 5px;
+
+    /* your custom style here */
+}
+
+.hljs-ln-line {
+    font-size: 18px;
+    padding: 1px 1px 1px 10px !important;
+
+}
+
+pre {
+    margin: 0;
+}

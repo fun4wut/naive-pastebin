@@ -1,14 +1,12 @@
 use rocket::{State, Response};
 use crate::core::StoreLock;
 use rocket::http::{ContentType, Status};
-use crate::service::gen_embed;
+use crate::service::{gen_embed, find_record};
 use std::io::Cursor;
 use rocket_contrib::templates::{Template};
-use crate::dto::SaveRes;
+use crate::dto::{FindRes};
 use crate::utils::env::*;
 use serde::Serialize;
-use rocket::request::Form;
-use crate::utils::time::SecTime;
 
 #[get("/embed/<key>")]
 pub fn show_embed(state: State<StoreLock>, key: String) -> Response {
@@ -22,19 +20,32 @@ pub fn show_embed(state: State<StoreLock>, key: String) -> Response {
 }
 
 #[derive(Serialize)]
-struct Index<'a> {
-    domain: &'a str
-}
+struct Index {}
 
 #[get("/")]
 pub fn index() -> Template {
-    let context = Index { domain: &*DOMAIN };
+    let context = Index {};
     Template::render("index", &context)
 }
 
-#[derive(FromForm)]
-struct SaveForm {
-    title: String,
-    exp: SecTime,
-    content: String,
+#[derive(Serialize)]
+struct Show<'a> {
+    rec: &'a FindRes,
+    key: String,
+    domain: &'a str,
+}
+
+#[get("/show/<key>")]
+pub fn show_record(state: State<StoreLock>, key: String) -> Option<Template> {
+    let clone = key.clone();
+    match find_record(state, key) {
+        Ok(res) => {
+            Some(Template::render("show", &Show {
+                rec: &res,
+                key: clone,
+                domain: &*DOMAIN,
+            }))
+        },
+        Err(_) => None
+    }
 }
