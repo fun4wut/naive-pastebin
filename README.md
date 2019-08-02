@@ -4,7 +4,13 @@
 
 加了点注释，强化了封装。把 Web Server 换成了 `Rocket` 。
 
-目前只有REST API。
+Web界面已上线，欢迎访问 <https://paste.fun4go.top> 进行尝鲜。
+
+## 截图
+
+![创建paste](https://gofun4-pic.oss-cn-hangzhou.aliyuncs.com/pastebin-1.png)
+
+![显示paste](https://gofun4-pic.oss-cn-hangzhou.aliyuncs.com/pastebin-2.png)
 
 ## 部署
 
@@ -103,7 +109,7 @@ GET /raw/<key>
 - [x] 单元测试
 - [x] 健壮的Error机制
 - [x] 考虑对命令行用户的友好度
-- [ ] Web界面
+- [x] Web界面
 - [x] 以 `iframe` / `js脚本` 形式嵌入【参照 <https://pastebin.com/>】
 - [x] 前端代码高亮
 - [x] `raw` 字符串显示
