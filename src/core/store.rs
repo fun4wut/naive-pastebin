@@ -128,7 +128,6 @@ mod tests {
     use crate::core::{LruValueSize, WithDeadTime};
     use super::*;
     use crate::utils::time::now_nano;
-    use std::thread::sleep;
 
     #[derive(PartialEq, Clone, Debug)]
     struct Bar { t: NanoTime }
