@@ -1,13 +1,13 @@
 use crate::core::StoreLock;
 use crate::dto::{SaveReq, SaveRes};
 use crate::utils::env::*;
-use crate::utils::time::{now_nano, nano_to_sec, sec_to_nano, SecTime};
+use crate::utils::time::{now_nano, nano_to_sec, sec_to_nano, SecTime, NanoTime};
 use crate::domain::record::Record;
 use crate::domain::key::nano_to_key;
 use rocket::State;
 use crate::utils::error::StoreError;
 use std::sync::Arc;
-
+use rand::random;
 /// 存储record
 pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq, title: String, exp: SecTime)
                    -> Result<SaveRes, StoreError> {
@@ -15,8 +15,19 @@ pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq, title: String, ex
         // 如果过期时间超过最大值，抛出错误
         return Err(StoreError::ExpOverflowErr);
     }
-    let now = now_nano();
+    let mut now = now_nano();
     let saving_time = nano_to_sec(now);
+
+
+    // write store
+    // assert: store_lock.write never returns Err or paincs
+    let mut store = store_lock.write().unwrap();
+
+    // 防止冲突，加上随机数
+    while store.contains(now) {
+        now += random::<u8>() as NanoTime;
+    }
+
     let dead_time = now + sec_to_nano(exp);
     // 构造record
     let record = Record {
@@ -27,11 +38,7 @@ pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq, title: String, ex
         content: Arc::new(dto.content),
     };
 
-    // write store
-    // assert: store_lock.write never returns Err or paincs
-    let mut store = store_lock.write().unwrap();
 
-    // 错误上抛
     store.save(now, record)?;
 
     let store_size = store.total_value_size();

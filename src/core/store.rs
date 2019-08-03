@@ -64,9 +64,10 @@ impl<K, V> Store<K, V>
                 entry.or_insert(key); // 插入该entry
                 break;
             }
-            dead_time += sec_to_nano(1); // 如果有碰撞，过期时间+1s
+            dead_time += rand::random::<u8>() as NanoTime; // 如果有碰撞，过期时间加上一个随机数
             info!("dead_time collision: {}", dead_time);
         }
+
         // 存放至LRU
         self.map.insert(key, item);
         Ok(())
@@ -120,6 +121,11 @@ impl<K, V> Store<K, V>
     /// 把LRU收缩到合适的大小
     pub fn shrink(&mut self) {
         self.map.shrink_to_fit()
+    }
+
+    #[inline]
+    pub fn contains(&self, k: K) -> bool {
+        self.map.contains_key(&k)
     }
 }
 

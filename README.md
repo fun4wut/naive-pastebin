@@ -20,7 +20,6 @@ $ ./target/release/naive-pastebin
 ```
 
 
-
 ### 环境变量
 
 Prefix: `PASTEBIN_`
@@ -104,6 +103,20 @@ Built-in Memory Store
 GET /raw/<key>
 ```
 
+## Benchmark
+
+### find
+
+```bash
+$ ab -n 13000 -c 50 http://localhost:8085/api/save/xxxx
+```
+
+### save
+
+```bash
+$ ab -n 13000 -c 50 -p `json_file` -T "application/json" http://localhost:8085/api/save\?title\=233\&exp\=86400
+```
+
 ## TODO
 
 - [x] 单元测试
@@ -113,7 +126,7 @@ GET /raw/<key>
 - [x] 以 `iframe` / `js脚本` 形式嵌入【参照 <https://pastebin.com/>】
 - [x] 前端代码高亮
 - [x] `raw` 字符串显示
-- [ ] 核心代码优化，减少 `clone` 造成的内存开销
+- [x] 核心代码优化，减少 `clone` 造成的内存开销
 - [ ] 数据备份【 `snapshot` / `log`】
 - [ ] 二级存储【用于存储被LRU挤掉的record】
 - [ ] 编辑/删除功能【使用一个密钥来验证，密钥只会在新建时出现，保存在浏览器 `localStorage` 中】
