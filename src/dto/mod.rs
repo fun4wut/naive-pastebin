@@ -2,6 +2,8 @@
 
 use crate::utils::time::SecTime;
 use serde::{Serialize, Deserialize};
+use std::rc::Rc;
+use std::sync::Arc;
 
 /// 保存文件的JSON请求
 #[derive(Serialize, Deserialize)]
@@ -47,13 +49,13 @@ impl<T> ResDTO<T> where T: Serialize {
 
 #[derive(Serialize)]
 pub struct SaveRes {
-    pub key: String
+    pub key: Arc<String>
 }
 
 #[derive(Serialize)]
 pub struct FindRes {
-    pub title: String,
-    pub content: String,
+    pub title: Arc<String>,
+    pub content: Arc<String>,
     pub saving_time: SecTime,
     pub expiration: SecTime,
     pub view_count: u64,

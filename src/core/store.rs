@@ -7,6 +7,7 @@ use std::collections::btree_map::Entry;
 use crate::utils::error::StoreError;
 
 /// 存储结构
+///
 /// Value需要实现两个Trait
 pub struct Store<K, V>
     where

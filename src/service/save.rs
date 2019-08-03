@@ -6,6 +6,7 @@ use crate::domain::record::Record;
 use crate::domain::key::nano_to_key;
 use rocket::State;
 use crate::utils::error::StoreError;
+use std::sync::Arc;
 
 /// 存储record
 pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq, title: String, exp: SecTime)
@@ -22,8 +23,8 @@ pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq, title: String, ex
         expiration: exp,
         saving_time,
         dead_time,
-        title,
-        content: dto.content,
+        title: Arc::new(title),
+        content: Arc::new(dto.content),
     };
 
     // write store
@@ -35,7 +36,7 @@ pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq, title: String, ex
 
     let store_size = store.total_value_size();
     let item_count = store.item_count();
-    let key = nano_to_key(now);
+    let key = Arc::new(nano_to_key(now));
 
     info!(
         "SAVE key = {}, store_size = {}, item_count = {}",

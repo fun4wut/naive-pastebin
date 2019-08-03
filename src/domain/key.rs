@@ -2,19 +2,20 @@ use crate::utils::env::CRYPT_KEY;
 use crate::utils::time::*;
 use short_crypt::ShortCrypt;
 
-const VALID_BYTES: usize = 8; // 取NanoTime的前8位
+const VALID_BYTES: usize = 8; // use the first 8 bit
 
+// create a singleton
 lazy_static! {
     static ref SC: ShortCrypt = { ShortCrypt::new(&*CRYPT_KEY) };
 }
 
+/// convert nano to key
 #[inline]
-/// 将纳秒化为Key
 pub fn nano_to_key(nano: NanoTime) -> String {
     SC.encrypt_to_qr_code_alphanumeric(&nano.to_ne_bytes()[..VALID_BYTES])
 }
 
-/// 将key转化为纳秒
+/// convert key to nano
 pub fn key_to_nano(key: &str) -> Option<NanoTime> {
     SC.decrypt_qr_code_alphanumeric(key)
         .ok()
