@@ -127,9 +127,10 @@ $ ab -n 13000 -c 50 -p `json_file` -T "application/json" http://localhost:8085/a
 - [x] 前端代码高亮
 - [x] `raw` 字符串显示
 - [x] 核心代码优化，减少 `clone` 造成的内存开销
-- [ ] 数据备份【 `snapshot` / `log`】
-- [ ] 二级存储【用于存储被LRU挤掉的record】
-- [ ] 编辑/删除功能【使用一个密钥来验证，密钥只会在新建时出现，保存在浏览器 `localStorage` 中】
+- [ ] 过期时间可为无限
+- [ ] 数据备份【 `snapshot` / `log` 】
+- [ ] 冷数据存入硬盘
+- [ ] 编辑/删除/回滚功能【使用一个密钥来验证，密钥只会在新建时出现，保存在浏览器 `localStorage` 中】
 - [ ] 历史版本显示
 
 

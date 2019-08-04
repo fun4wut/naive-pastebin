@@ -9,12 +9,9 @@ use crate::utils::error::StoreError;
 use std::sync::Arc;
 use rand::random;
 /// 存储record
-pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq, title: String, exp: SecTime)
+pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq, title: String, exp: Option<SecTime>)
                    -> Result<SaveRes, StoreError> {
-    if exp > *MAX_EXPIRATION {
-        // 如果过期时间超过最大值，抛出错误
-        return Err(StoreError::ExpOverflowErr);
-    }
+
     let mut now = now_nano();
     let saving_time = nano_to_sec(now);
 
@@ -28,7 +25,7 @@ pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq, title: String, ex
         now += random::<u8>() as NanoTime;
     }
 
-    let dead_time = now + sec_to_nano(exp);
+    let dead_time = exp.map(|e| now + sec_to_nano(e));
     // 构造record
     let record = Record {
         expiration: exp,

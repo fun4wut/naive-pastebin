@@ -56,6 +56,6 @@ pub struct FindRes {
     pub title: Arc<String>,
     pub content: Arc<String>,
     pub saving_time: SecTime,
-    pub expiration: SecTime,
+    pub expiration: Option<SecTime>,
     pub view_count: u64,
 }

@@ -52,20 +52,30 @@ impl<K, V> Store<K, V>
         while self.max_value_size - self.total_value_size < item.size {
             if let Some((_, it)) = self.map.pop_front() {
                 self.total_value_size -= it.size;
-                self.queue.remove(&it.value.dead_time());
+
+                // 如果过期时间有限，从queue中删去
+                if let Some(tmp_dead_time) = it.value.dead_time() {
+                    self.queue.remove(&tmp_dead_time);
+                }
             }
         }
         self.total_value_size += item.size;
-        let mut dead_time = item.value.dead_time();
+        let dead_time = item.value.dead_time();
+
         // 处理过期时间碰撞
-        loop {
-            let entry = self.queue.entry(dead_time);// 寻找具有该过期时间的entry
-            if let Entry::Vacant(_) = entry { // 如果没找到
-                entry.or_insert(key); // 插入该entry
-                break;
-            }
-            dead_time += rand::random::<u8>() as NanoTime; // 如果有碰撞，过期时间加上一个随机数
-            info!("dead_time collision: {}", dead_time);
+        // 其实过期时间碰撞概率非常低。。如果真碰撞了，对queue的remove操作就废了
+//        loop {
+//            let entry = self.queue.entry(dead_time);// 寻找具有该过期时间的entry
+//            if let Entry::Vacant(_) = entry { // 如果没找到
+//                entry.or_insert(key); // 插入该entry
+//                break;
+//            }
+//            dead_time += rand::random::<u8>() as NanoTime; // 如果有碰撞，过期时间加上一个随机数
+//            info!("dead_time collision: {}", dead_time);
+//        }
+
+        if let Some(dt) = dead_time {
+            self.queue.insert(dt, key);
         }
 
         // 存放至LRU
@@ -74,6 +84,8 @@ impl<K, V> Store<K, V>
     }
 
     /// 根据key来访问
+    ///
+    /// 刷新LRU
     pub fn access(&mut self, key: K) -> Option<&StoreItem<V>> {
         let item = self.map.get_refresh(&key)?; // 获取item，更新LRU
         item.access_count += 1;
@@ -136,7 +148,7 @@ mod tests {
     use crate::utils::time::now_nano;
 
     #[derive(PartialEq, Clone, Debug)]
-    struct Bar { t: NanoTime }
+    struct Bar { t: Option<NanoTime> }
 
     impl LruValueSize for Bar {
         fn lru_value_size(&self) -> usize {
@@ -145,7 +157,7 @@ mod tests {
     }
 
     impl WithDeadTime for Bar {
-        fn dead_time(&self) -> NanoTime {
+        fn dead_time(&self) -> Option<NanoTime> {
             self.t
         }
     }
@@ -155,7 +167,7 @@ mod tests {
     fn test_save() {
         let mut store: Store<usize, Bar> = Store::new(2000);
         for i in 0..50 {
-            store.save(i, Bar { t: i as NanoTime }).expect("插入失败");
+            store.save(i, Bar { t: Some(i as NanoTime) }).expect("插入失败");
         }
         assert_eq!(store.map.len(), 40);
         assert_eq!(store.queue.len(), 40);
@@ -165,7 +177,7 @@ mod tests {
     #[test]
     fn test_access() {
         let mut store: Store<usize, Bar> = Store::new(2000);
-        let v = Bar { t: 20 as NanoTime };
+        let v = Bar { t: Some(20 as NanoTime) };
         let u = v.clone();
         store.save(20, v).unwrap();
         assert_eq!(store.access(20).unwrap().value, u);
@@ -177,7 +189,7 @@ mod tests {
         let mut store: Store<NanoTime, Bar> = Store::new(2000);
         let now = now_nano();
         for i in 0..60 {
-            store.save(i, Bar { t: now + i });
+            store.save(i, Bar { t: Some(now + i) });
         }
         assert!(store.needs_clean(now + 62));
         let num = store.clean(now + 30);

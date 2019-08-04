@@ -2,8 +2,6 @@
 //!
 //! MAX_POST_SIZE: 32 KB
 //!
-//! MAX_EXPIRATION: 7 days
-//!
 //! CLEAN_DURATION: 5000 ms
 //!
 //! ADDR: localhost
@@ -35,7 +33,6 @@ fn parse<T: FromStr>(key: &'static str, default: T) -> T {
 lazy_static! {
     pub static ref MAX_STORE_SIZE: usize = { parse("PASTEBIN_MAX_STORE_SIZE", 100 * 1024 * 1024) };
     pub static ref MAX_POST_SIZE: usize = { parse("PASTEBIN_MAX_POST_SIZE", 32 * 1024) };
-    pub static ref MAX_EXPIRATION: SecTime = { parse("PASTEBIN_MAX_EXPIRATION", 7 * 24 * 60 * 60) };
     pub static ref CLEAN_DURATION: u64 = { parse("PASTEBIN_CLEAN_DURATION", 5000) };
     pub static ref ADDR: String = { env::var("PASTEBIN_ADDR").unwrap_or(DEFAULT_ADDR.into()) };
     pub static ref PORT: u16 = {parse("PASTEBIN_PORT", 8085)};
@@ -47,7 +44,6 @@ lazy_static! {
 /// 打印环境变量
 pub fn info_env() {
     info!("MAX_STORE_SIZE: {} bytes", *MAX_STORE_SIZE);
-    info!("MAX_EXPIRATION: {} s", *MAX_EXPIRATION);
     info!("CLEAN_DURATION: {} ms", *CLEAN_DURATION);
     info!("MAX_POST_SIZE: {} bytes", *MAX_POST_SIZE);
     info!("SERVICE_ADDRESS: {}", *DOMAIN);

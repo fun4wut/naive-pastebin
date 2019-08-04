@@ -10,8 +10,8 @@ pub struct Record {
     pub title: Arc<String>,
     pub content: Arc<String>,
     pub saving_time: SecTime,
-    pub expiration: SecTime,
-    pub dead_time: NanoTime,
+    pub expiration: Option<SecTime>,
+    pub dead_time: Option<NanoTime>,
 }
 
 impl Record {
@@ -34,7 +34,7 @@ impl LruValueSize for Record {
 
 impl WithDeadTime for Record {
     /// the dead time of lru_value
-    fn dead_time(&self) -> NanoTime {
+    fn dead_time(&self) -> Option<NanoTime> {
         self.dead_time
     }
 }

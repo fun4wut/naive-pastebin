@@ -7,7 +7,8 @@ pub trait LruValueSize {
 
 /// 过期时间
 pub trait WithDeadTime {
-    fn dead_time(&self) -> NanoTime;
+    /// 返回值为 `None` 即为永不过期
+    fn dead_time(&self) -> Option<NanoTime>;
 }
 
 /// 对Value实现的一个包装
@@ -46,7 +47,7 @@ mod tests {
 
     struct Foo {
         size: usize,
-        time: NanoTime,
+        time: Option<NanoTime>,
     }
 
     impl LruValueSize for Foo {
@@ -56,7 +57,7 @@ mod tests {
     }
 
     impl WithDeadTime for Foo {
-        fn dead_time(&self) -> u128 {
+        fn dead_time(&self) -> Option<NanoTime> {
             self.time
         }
     }
@@ -64,10 +65,10 @@ mod tests {
     #[test]
     fn test_store_item() {
         let item = StoreItem::new(Foo {
-            time: 2000,
+            time: Some(2000),
             size: 500,
         });
-        assert_eq!(item.value.dead_time(), 2000);
+        assert_eq!(item.value.dead_time().unwrap(), 2000);
         assert_eq!(item.value.lru_value_size(), 500);
     }
 }
