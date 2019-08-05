@@ -1,7 +1,7 @@
 //! 数据传输时的object
 
 use crate::utils::time::SecTime;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
 /// 保存文件的JSON请求
@@ -11,7 +11,6 @@ pub struct SaveReq {
     pub content: String,
 }
 
-
 /// 返回的JSON，包装的最外层对象
 #[derive(Serialize)]
 pub struct ResDTO<T: Serialize> {
@@ -20,8 +19,10 @@ pub struct ResDTO<T: Serialize> {
     pub data: Option<T>,
 }
 
-
-impl<T> ResDTO<T> where T: Serialize {
+impl<T> ResDTO<T>
+    where
+        T: Serialize,
+{
     pub fn success(data: T) -> Self {
         Self {
             code: 0,
@@ -48,7 +49,7 @@ impl<T> ResDTO<T> where T: Serialize {
 
 #[derive(Serialize)]
 pub struct SaveRes {
-    pub key: Arc<String>
+    pub key: Arc<String>,
 }
 
 #[derive(Serialize)]

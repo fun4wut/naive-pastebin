@@ -3,8 +3,8 @@
 //! 记录标题，语言，内容，时间等数据
 use crate::core::{LruValueSize, WithDeadTime};
 use crate::utils::time::*;
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct Record {
@@ -18,8 +18,7 @@ pub struct Record {
 impl Record {
     /// escape the code to html style
     pub fn escape(&self) -> String {
-        self.content.replace("<", "&lt;")
-            .replace(">", "&gt;")
+        self.content.replace("<", "&lt;").replace(">", "&gt;")
     }
 }
 
@@ -27,9 +26,7 @@ impl LruValueSize for Record {
     /// the size of lru_value
     fn lru_value_size(&self) -> usize {
         // size on stack + size on heap
-        std::mem::size_of::<Self>()
-            + self.title.as_bytes().len()
-            + self.content.as_bytes().len()
+        std::mem::size_of::<Self>() + self.title.as_bytes().len() + self.content.as_bytes().len()
     }
 }
 

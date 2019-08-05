@@ -1,8 +1,8 @@
-use rocket::State;
 use crate::core::StoreLock;
-use crate::utils::error::StoreError;
 use crate::domain::key::key_to_nano;
 use crate::utils::env::*;
+use crate::utils::error::StoreError;
+use rocket::State;
 /// 生成嵌入的JS代码
 pub fn gen_embed(state: State<StoreLock>, key: String) -> Result<String, StoreError> {
     let mut store = state.write().unwrap();

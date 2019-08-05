@@ -1,13 +1,13 @@
-use std::hash::Hash;
-use crate::core::store_item::{LruValueSize, WithDeadTime, StoreItem};
-use linked_hash_map::LinkedHashMap;
-use std::collections::BTreeMap;
-use crate::utils::time::{NanoTime, sec_to_nano, ToArray};
-use std::collections::btree_map::Entry;
-use crate::utils::error::StoreError;
-use serde::Serialize;
-use serde::de::DeserializeOwned;
 use crate::core::disk::DiskStore;
+use crate::core::store_item::{LruValueSize, StoreItem, WithDeadTime};
+use crate::utils::error::StoreError;
+use crate::utils::time::{sec_to_nano, NanoTime, ToArray};
+use linked_hash_map::LinkedHashMap;
+use serde::de::DeserializeOwned;
+use serde::Serialize;
+use std::collections::btree_map::Entry;
+use std::collections::BTreeMap;
+use std::hash::Hash;
 
 /// 存储结构
 ///
@@ -15,7 +15,7 @@ use crate::core::disk::DiskStore;
 pub struct Store<K, V>
     where
         K: Copy + Hash + Eq + ToArray,
-        V: LruValueSize + WithDeadTime + Serialize + DeserializeOwned
+        V: LruValueSize + WithDeadTime + Serialize + DeserializeOwned,
 {
     /// 记录（K，V）
     map: LinkedHashMap<K, StoreItem<V>>,
@@ -33,7 +33,7 @@ pub struct Store<K, V>
 impl<K, V> Store<K, V>
     where
         K: Copy + Hash + Eq + ToArray,
-        V: LruValueSize + WithDeadTime + Serialize + DeserializeOwned
+        V: LruValueSize + WithDeadTime + Serialize + DeserializeOwned,
 {
     /// 构造一个Store实例
     pub fn new(max_value_size: usize) -> Self {
@@ -73,15 +73,15 @@ impl<K, V> Store<K, V>
 
         // 处理过期时间碰撞
         // 其实过期时间碰撞概率非常低。。如果真碰撞了，对queue的remove操作就废了
-//        loop {
-//            let entry = self.queue.entry(dead_time);// 寻找具有该过期时间的entry
-//            if let Entry::Vacant(_) = entry { // 如果没找到
-//                entry.or_insert(key); // 插入该entry
-//                break;
-//            }
-//            dead_time += rand::random::<u8>() as NanoTime; // 如果有碰撞，过期时间加上一个随机数
-//            info!("dead_time collision: {}", dead_time);
-//        }
+        //        loop {
+        //            let entry = self.queue.entry(dead_time);// 寻找具有该过期时间的entry
+        //            if let Entry::Vacant(_) = entry { // 如果没找到
+        //                entry.or_insert(key); // 插入该entry
+        //                break;
+        //            }
+        //            dead_time += rand::random::<u8>() as NanoTime; // 如果有碰撞，过期时间加上一个随机数
+        //            info!("dead_time collision: {}", dead_time);
+        //        }
 
         if let Some(dt) = dead_time {
             self.queue.insert(dt, key);
@@ -96,15 +96,15 @@ impl<K, V> Store<K, V>
     ///
     /// 刷新LRU
     pub fn access(&mut self, key: K) -> Result<&StoreItem<V>, StoreError> {
-//        let item = self.map.get_refresh(&key)?; // 获取item，更新LRU
-//        item.access_count += 1;
-//        Some(item)
-//        self.map.get_refresh(&key)
-//            .ok_or(StoreError::NotFoundErr)
-//            .map(|item| {
-//                item.access_count += 1;
-//                item
-//            })
+        //        let item = self.map.get_refresh(&key)?; // 获取item，更新LRU
+        //        item.access_count += 1;
+        //        Some(item)
+        //        self.map.get_refresh(&key)
+        //            .ok_or(StoreError::NotFoundErr)
+        //            .map(|item| {
+        //                item.access_count += 1;
+        //                item
+        //            })
 
         if let Some(item) = self.map.get_refresh(&key) {
             item.access_count += 1;
@@ -167,12 +167,14 @@ impl<K, V> Store<K, V>
 
 #[cfg(test)]
 mod tests {
-    use crate::core::{LruValueSize, WithDeadTime};
     use super::*;
+    use crate::core::{LruValueSize, WithDeadTime};
     use crate::utils::time::now_nano;
 
     #[derive(PartialEq, Clone, Debug)]
-    struct Bar { t: Option<NanoTime> }
+    struct Bar {
+        t: Option<NanoTime>,
+    }
 
     impl LruValueSize for Bar {
         fn lru_value_size(&self) -> usize {
@@ -186,12 +188,18 @@ mod tests {
         }
     }
 
-
     #[test]
     fn test_save() {
         let mut store: Store<usize, Bar> = Store::new(2000);
         for i in 0..50 {
-            store.save(i, Bar { t: Some(i as NanoTime) }).expect("插入失败");
+            store
+                .save(
+                    i,
+                    Bar {
+                        t: Some(i as NanoTime),
+                    },
+                )
+                .expect("插入失败");
         }
         assert_eq!(store.map.len(), 40);
         assert_eq!(store.queue.len(), 40);
@@ -201,7 +209,9 @@ mod tests {
     #[test]
     fn test_access() {
         let mut store: Store<usize, Bar> = Store::new(2000);
-        let v = Bar { t: Some(20 as NanoTime) };
+        let v = Bar {
+            t: Some(20 as NanoTime),
+        };
         let u = v.clone();
         store.save(20, v).unwrap();
         assert_eq!(store.access(20).unwrap().value, u);

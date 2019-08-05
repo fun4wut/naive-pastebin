@@ -1,0 +1,22 @@
+
+[tasks.build]
+command = "cargo"
+args = ["rustc","--","-Z","polonius"]
+
+[tasks.clean-data]
+script = ["rm ./data -r"]
+
+[tasks.clean-all]
+dependencies = ["clean-data", "clean"]
+
+[tasks.run]
+dependencies = ["build"]
+script = ["./target/debug/naive-pastebin"]
+
+[tasks.run-win]
+dependencies = ["build"]
+script = ['''.\target\debug\naive-pastebin''']
+
+[tasks.release]
+command = "cargo"
+args = ["rustc","--release","--","-Z","polonius"]

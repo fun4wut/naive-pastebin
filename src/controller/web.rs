@@ -1,12 +1,12 @@
-use rocket::{State, Response};
 use crate::core::StoreLock;
-use rocket::http::{ContentType, Status};
-use crate::service::{gen_embed, find_record};
-use std::io::Cursor;
-use rocket_contrib::templates::{Template};
-use crate::dto::{FindRes};
+use crate::dto::FindRes;
+use crate::service::{find_record, gen_embed};
 use crate::utils::env::*;
+use rocket::http::{ContentType, Status};
+use rocket::{Response, State};
+use rocket_contrib::templates::Template;
 use serde::Serialize;
+use std::io::Cursor;
 
 #[get("/embed/<key>")]
 pub fn show_embed(state: State<StoreLock>, key: String) -> Response {
@@ -14,7 +14,7 @@ pub fn show_embed(state: State<StoreLock>, key: String) -> Response {
     res.set_header(ContentType::JavaScript);
     match gen_embed(state, key) {
         Ok(js) => res.set_sized_body(Cursor::new(js)),
-        Err(_) => res.set_status(Status::NotFound)
+        Err(_) => res.set_status(Status::NotFound),
     };
     res
 }
@@ -39,14 +39,15 @@ struct Show<'a> {
 pub fn show_record(state: State<StoreLock>, key: String) -> Option<Template> {
     let clone = key.clone();
     match find_record(state, key) {
-        Ok(res) => {
-            Some(Template::render("show", &Show {
+        Ok(res) => Some(Template::render(
+            "show",
+            &Show {
                 rec: &res,
                 key: clone,
                 domain: &*DOMAIN,
-            }))
-        },
-        Err(_) => None
+            },
+        )),
+        Err(_) => None,
     }
 }
 
@@ -54,13 +55,14 @@ pub fn show_record(state: State<StoreLock>, key: String) -> Option<Template> {
 pub fn show_embed_iframe(state: State<StoreLock>, key: String) -> Option<Template> {
     let clone = key.clone();
     match find_record(state, key) {
-        Ok(res) => {
-            Some(Template::render("embed", &Show {
+        Ok(res) => Some(Template::render(
+            "embed",
+            &Show {
                 rec: &res,
                 key: clone,
                 domain: &*DOMAIN,
-            }))
-        },
-        Err(_) => None
+            },
+        )),
+        Err(_) => None,
     }
 }

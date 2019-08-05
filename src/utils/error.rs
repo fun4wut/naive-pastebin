@@ -1,9 +1,9 @@
+use crate::utils::env::*;
+use bincode::ErrorKind;
+use std::error::Error;
 use std::fmt;
 use std::fmt::Formatter;
 use std::option::NoneError;
-use crate::utils::env::*;
-use std::error::Error;
-use bincode::ErrorKind;
 #[derive(Debug)]
 pub enum StoreError {
     /// record过大错误
@@ -15,7 +15,7 @@ pub enum StoreError {
     /// bincode序列化/反序列化错误
     BinCodeErr(Box<ErrorKind>),
     /// 空错误
-    NoneErr
+    NoneErr,
 }
 
 use StoreError::*;
@@ -27,7 +27,7 @@ impl fmt::Display for StoreError {
             NotFoundErr => write!(f, "未找到该记录！"),
             IOErr(e) => write!(f, "{}", e.description()),
             BinCodeErr(e) => write!(f, "{}", e.description()),
-            NoneErr => write!(f, "空值！")
+            NoneErr => write!(f, "空值！"),
         }
     }
 }
@@ -39,11 +39,10 @@ impl Error for StoreError {
             NotFoundErr => "未找到该记录！",
             IOErr(e) => e.description(),
             BinCodeErr(e) => e.description(),
-            NoneErr => "空值！"
+            NoneErr => "空值！",
         }
     }
 }
-
 
 impl From<std::io::Error> for StoreError {
     fn from(e: std::io::Error) -> Self {

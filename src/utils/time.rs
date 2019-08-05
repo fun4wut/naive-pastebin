@@ -3,7 +3,6 @@ use std::time::{SystemTime, UNIX_EPOCH};
 pub type NanoTime = u128;
 pub type SecTime = u64;
 
-
 pub trait ToArray {
     fn to_array(&self) -> [u8; 16];
 }
@@ -31,4 +30,3 @@ pub const fn sec_to_nano(sec: SecTime) -> NanoTime {
 pub const fn nano_to_sec(nano: NanoTime) -> SecTime {
     (nano / 1_000_000_000) as SecTime
 }
-

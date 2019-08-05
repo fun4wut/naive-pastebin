@@ -1,8 +1,8 @@
 use crate::core::{Store, StoreLock};
-use crate::utils::time::{NanoTime, now_nano};
+use crate::utils::env::*;
+use crate::utils::time::{now_nano, NanoTime};
 use std::thread;
 use std::time::Duration;
-use crate::utils::env::*;
 
 /// 垃圾回收
 fn gc(store: &mut Store, now: NanoTime) {

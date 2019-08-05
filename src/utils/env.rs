@@ -11,9 +11,9 @@
 //! CRYPT_KEY: "fun4wut"
 //!
 //! DOMAIN: `ADDR:PORT`
-use std::str::FromStr;
-use std::env;
 use super::time::*;
+use std::env;
+use std::str::FromStr;
 
 // 默认的服务地址
 const DEFAULT_ADDR: &'static str = "localhost";
@@ -35,10 +35,11 @@ lazy_static! {
     pub static ref MAX_POST_SIZE: usize = { parse("PASTEBIN_MAX_POST_SIZE", 32 * 1024) };
     pub static ref CLEAN_DURATION: u64 = { parse("PASTEBIN_CLEAN_DURATION", 5000) };
     pub static ref ADDR: String = { env::var("PASTEBIN_ADDR").unwrap_or(DEFAULT_ADDR.into()) };
-    pub static ref PORT: u16 = {parse("PASTEBIN_PORT", 8085)};
+    pub static ref PORT: u16 = { parse("PASTEBIN_PORT", 8085) };
     pub static ref CRYPT_KEY: String =
         { env::var("PASTEBIN_CRYPT_KEY").unwrap_or(DEFAULT_CRYPT_KEY.into()) };
-    pub static ref DOMAIN: String = {env::var("PASTEBIN_DOMAIN").unwrap_or(format!("{}:{}", *ADDR, *PORT))};
+    pub static ref DOMAIN: String =
+        { env::var("PASTEBIN_DOMAIN").unwrap_or(format!("{}:{}", *ADDR, *PORT)) };
 }
 
 /// 打印环境变量

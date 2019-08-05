@@ -2,13 +2,13 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 #![feature(try_trait, box_syntax)]
 
-mod core;
-mod utils;
-mod domain;
 mod controller;
-mod service;
+mod core;
+mod domain;
 mod dto;
 mod server;
+mod service;
+mod utils;
 #[macro_use]
 extern crate log;
 extern crate env_logger;
@@ -27,5 +27,7 @@ fn main() {
     info_env();
     if let Ok(r) = rocket() {
         r.launch();
-    } else { error!("服务器启动失败!"); }
+    } else {
+        error!("服务器启动失败!");
+    }
 }

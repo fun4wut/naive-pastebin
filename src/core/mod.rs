@@ -1,11 +1,12 @@
 //! 核心数据结构模块
-mod store_item;
-mod store;
 mod disk;
-pub use store_item::{WithDeadTime, LruValueSize}; // 只导出两个trait
+mod store;
+mod store_item;
 
-use crate::utils::time::NanoTime;
+pub use store_item::{LruValueSize, WithDeadTime}; // 只导出两个trait
+
 use crate::domain::record::Record;
+use crate::utils::time::NanoTime;
 use std::sync::{Arc, RwLock};
 
 // 包装Store，并导出
@@ -14,12 +15,5 @@ pub type Store = store::Store<NanoTime, Record>;
 pub type StoreLock = Arc<RwLock<Store>>;
 
 pub fn create_store_lock(max_size: usize) -> StoreLock {
-    Arc::new(
-        RwLock::new(
-            Store::new(max_size)
-        )
-    )
+    Arc::new(RwLock::new(Store::new(max_size)))
 }
-
-
-

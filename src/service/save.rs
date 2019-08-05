@@ -1,20 +1,22 @@
 use crate::core::StoreLock;
+use crate::domain::key::nano_to_key;
+use crate::domain::record::Record;
 use crate::dto::{SaveReq, SaveRes};
 use crate::utils::env::*;
-use crate::utils::time::{now_nano, nano_to_sec, sec_to_nano, SecTime, NanoTime};
-use crate::domain::record::Record;
-use crate::domain::key::nano_to_key;
-use rocket::State;
 use crate::utils::error::StoreError;
-use std::sync::Arc;
+use crate::utils::time::{nano_to_sec, now_nano, sec_to_nano, NanoTime, SecTime};
 use rand::random;
+use rocket::State;
+use std::sync::Arc;
 /// 存储record
-pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq, title: String, exp: Option<SecTime>)
-                   -> Result<SaveRes, StoreError> {
-
+pub fn save_record(
+    store_lock: State<StoreLock>,
+    dto: SaveReq,
+    title: String,
+    exp: Option<SecTime>,
+) -> Result<SaveRes, StoreError> {
     let mut now = now_nano();
     let saving_time = nano_to_sec(now);
-
 
     // write store
     // assert: store_lock.write never returns Err or paincs
@@ -34,7 +36,6 @@ pub fn save_record(store_lock: State<StoreLock>, dto: SaveReq, title: String, ex
         title: Arc::new(title),
         content: Arc::new(dto.content),
     };
-
 
     store.save(now, record)?;
 

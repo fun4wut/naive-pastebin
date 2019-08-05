@@ -32,4 +32,3 @@ pub fn key_to_nano(key: &str) -> Option<NanoTime> {
             u128::from_ne_bytes(arr)
         })
 }
-
