@@ -42,11 +42,12 @@
       <div class="four wide field">
         <label>Expires</label>
         <select id="exp" name="exp">
+          <option value="">Never</option>
           <option value="3600">1 hour</option>
           <option value="7200">2 hour</option>
           <option value="18000">5 hour</option>
           <option value="43200">12 hour</option>
-          <option selected value="86400">1 day</option>
+          <option value="86400">1 day</option>
           <option value="259200">3 day</option>
           <option value="432000">5 day</option>
           <option value="604800">7 day</option>
@@ -119,7 +120,8 @@
   $("#btn").click(() => {
     const title = $("#title").val();
     const exp = $("#exp").val();
-    fetch(`/api/save?title=${title}&exp=${exp}`, {
+    const uri = `/api/save?title=${title}&${exp && `exp=${exp}`}`;
+    fetch(uri, {
       method: "POST",
       body: JSON.stringify({
         content: editor.getValue()
