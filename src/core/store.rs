@@ -2,22 +2,28 @@ use std::hash::Hash;
 use crate::core::store_item::{LruValueSize, WithDeadTime, StoreItem};
 use linked_hash_map::LinkedHashMap;
 use std::collections::BTreeMap;
-use crate::utils::time::{NanoTime, sec_to_nano};
+use crate::utils::time::{NanoTime, sec_to_nano, ToArray};
 use std::collections::btree_map::Entry;
 use crate::utils::error::StoreError;
+use serde::Serialize;
+use serde::de::DeserializeOwned;
+use crate::core::disk::DiskStore;
 
 /// 存储结构
 ///
 /// Value需要实现两个Trait
 pub struct Store<K, V>
     where
-        K: Copy + Hash + Eq,
-        V: LruValueSize + WithDeadTime
+        K: Copy + Hash + Eq + ToArray,
+        V: LruValueSize + WithDeadTime + Serialize + DeserializeOwned
 {
     /// 记录（K，V）
     map: LinkedHashMap<K, StoreItem<V>>,
     /// 过期检测与删除
     queue: BTreeMap<NanoTime, K>,
+
+    /// 硬盘管理
+    disk: DiskStore<K, V>,
     /// 当前的容量
     total_value_size: usize,
     /// 最大容量
@@ -26,14 +32,15 @@ pub struct Store<K, V>
 
 impl<K, V> Store<K, V>
     where
-        K: Copy + Hash + Eq,
-        V: LruValueSize + WithDeadTime
+        K: Copy + Hash + Eq + ToArray,
+        V: LruValueSize + WithDeadTime + Serialize + DeserializeOwned
 {
     /// 构造一个Store实例
     pub fn new(max_value_size: usize) -> Self {
         Self {
             map: LinkedHashMap::new(),
             queue: BTreeMap::new(),
+            disk: DiskStore::new(),
             total_value_size: 0,
             max_value_size,
         }
@@ -50,13 +57,15 @@ impl<K, V> Store<K, V>
 
         // LRU淘汰掉老item，直到有空间来存放item
         while self.max_value_size - self.total_value_size < item.size {
-            if let Some((_, it)) = self.map.pop_front() {
+            if let Some((stamp, it)) = self.map.pop_front() {
                 self.total_value_size -= it.size;
 
                 // 如果过期时间有限，从queue中删去
                 if let Some(tmp_dead_time) = it.value.dead_time() {
                     self.queue.remove(&tmp_dead_time);
                 }
+
+                self.disk.save(stamp, it.value)?;
             }
         }
         self.total_value_size += item.size;
@@ -86,10 +95,25 @@ impl<K, V> Store<K, V>
     /// 根据key来访问
     ///
     /// 刷新LRU
-    pub fn access(&mut self, key: K) -> Option<&StoreItem<V>> {
-        let item = self.map.get_refresh(&key)?; // 获取item，更新LRU
-        item.access_count += 1;
-        Some(item)
+    pub fn access<'b: 'a, 'a>(&'b mut self, key: K) -> Result<&'a StoreItem<V>, StoreError> {
+//        let item = self.map.get_refresh(&key)?; // 获取item，更新LRU
+//        item.access_count += 1;
+//        Some(item)
+//        self.map.get_refresh(&key)
+//            .ok_or(StoreError::NotFoundErr)
+//            .map(|item| {
+//                item.access_count += 1;
+//                item
+//            })
+
+        if let Some(item) = self.map.get_refresh(&key) {
+            item.access_count += 1;
+            Ok(item)
+        } else {
+            let rec = self.disk.find(key)?;
+            self.save(key, rec)?;
+            Ok(self.map.get(&key)?)
+        }
     }
 
     /// 清洗过期的item，返回被清洗的item数量

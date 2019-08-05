@@ -1,7 +1,7 @@
 //! 核心数据结构模块
 mod store_item;
 mod store;
-
+mod disk;
 pub use store_item::{WithDeadTime, LruValueSize}; // 只导出两个trait
 
 use crate::utils::time::NanoTime;

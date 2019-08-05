@@ -4,8 +4,9 @@
 use crate::core::{LruValueSize, WithDeadTime};
 use crate::utils::time::*;
 use std::sync::Arc;
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize)]
 pub struct Record {
     pub title: Arc<String>,
     pub content: Arc<String>,

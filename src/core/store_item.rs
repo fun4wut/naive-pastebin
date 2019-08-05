@@ -1,4 +1,6 @@
 use crate::utils::time::*;
+use serde::de::DeserializeOwned;
+use serde::{Serialize, Deserialize};
 
 /// 获取Value的大小
 pub trait LruValueSize {
@@ -12,10 +14,10 @@ pub trait WithDeadTime {
 }
 
 /// 对Value实现的一个包装
-/// V要实现 `LruValueSize`
+/// V要实现 `LruValueSize` 和 序列化/反序列化
 pub struct StoreItem<V>
     where
-        V: LruValueSize
+        V: LruValueSize + DeserializeOwned + Serialize
 {
     /// Value的值
     pub value: V,
@@ -27,7 +29,7 @@ pub struct StoreItem<V>
 
 impl<V> StoreItem<V>
     where
-        V: LruValueSize
+        V: LruValueSize + DeserializeOwned + Serialize
 {
     pub fn new(value: V) -> Self {
         let size = value.lru_value_size();

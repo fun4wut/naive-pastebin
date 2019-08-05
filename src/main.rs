@@ -1,6 +1,6 @@
 #![allow(dead_code, unused_variables, unused_imports)]
 #![feature(proc_macro_hygiene, decl_macro)]
-#![feature(try_trait)]
+#![feature(try_trait, box_syntax)]
 
 mod core;
 mod utils;
