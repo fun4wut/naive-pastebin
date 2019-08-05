@@ -10,8 +10,8 @@ script = ["rm ./data -r"]
 dependencies = ["clean-data", "clean"]
 
 [tasks.run]
-dependencies = ["build"]
-script = ["./target/debug/naive-pastebin"]
+dependencies = ["release"]
+script = ["./target/release/naive-pastebin"]
 
 [tasks.run-win]
 dependencies = ["build"]

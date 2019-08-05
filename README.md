@@ -41,8 +41,7 @@ $ ./target/release/naive-pastebin
 | var            | default   | unit        | description                                                 |
 | -------------- | --------- | ----------- | ----------------------------------------------------------- |
 | MAX_STORE_SIZE | 104857600 | byte        | An ambiguous size count for controlling server memory usage |
-| MAX_EXPIRATION | 604800    | second      | Max expiration time                                         |
-| CLEAN_DURATION | 5000      | millisecond | GC interval                                                 |
+| CLEAN_DURATION | 60000      | millisecond | GC interval                                                 |
 
 
 
@@ -132,6 +131,7 @@ $ ab -n 13000 -c 50 -p `json_file` -T "application/json" http://localhost:8085/a
 - [x] 过期时间可为无限
 - [ ] 数据备份【 `snapshot` / `log` 】
 - [x] 冷数据存入硬盘
+- [ ] 硬盘写操作的异步化
 - [ ] 编辑/删除/回滚功能【使用一个密钥来验证，密钥只会在新建时出现，保存在浏览器 `localStorage` 中】
 - [ ] 历史版本显示
 

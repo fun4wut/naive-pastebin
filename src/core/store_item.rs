@@ -41,36 +41,36 @@ impl<V> StoreItem<V>
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::core::store_item::StoreItem;
-    use crate::core::{LruValueSize, WithDeadTime};
-    use crate::utils::time::NanoTime;
-
-    struct Foo {
-        size: usize,
-        time: Option<NanoTime>,
-    }
-
-    impl LruValueSize for Foo {
-        fn lru_value_size(&self) -> usize {
-            self.size
-        }
-    }
-
-    impl WithDeadTime for Foo {
-        fn dead_time(&self) -> Option<NanoTime> {
-            self.time
-        }
-    }
-
-    #[test]
-    fn test_store_item() {
-        let item = StoreItem::new(Foo {
-            time: Some(2000),
-            size: 500,
-        });
-        assert_eq!(item.value.dead_time().unwrap(), 2000);
-        assert_eq!(item.value.lru_value_size(), 500);
-    }
-}
+//#[cfg(test)]
+//mod tests {
+//    use crate::core::store_item::StoreItem;
+//    use crate::core::{LruValueSize, WithDeadTime};
+//    use crate::utils::time::NanoTime;
+//
+//    struct Foo {
+//        size: usize,
+//        time: Option<NanoTime>,
+//    }
+//
+//    impl LruValueSize for Foo {
+//        fn lru_value_size(&self) -> usize {
+//            self.size
+//        }
+//    }
+//
+//    impl WithDeadTime for Foo {
+//        fn dead_time(&self) -> Option<NanoTime> {
+//            self.time
+//        }
+//    }
+//
+//    #[test]
+//    fn test_store_item() {
+//        let item = StoreItem::new(Foo {
+//            time: Some(2000),
+//            size: 500,
+//        });
+//        assert_eq!(item.value.dead_time().unwrap(), 2000);
+//        assert_eq!(item.value.lru_value_size(), 500);
+//    }
+//}

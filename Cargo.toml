@@ -19,7 +19,7 @@ rocket = "0.4.2"
 rand = "0.7.0"
 bincode = "1.1.4"
 sha1 = { version = "0.6.0", features = ["std"] }
-
+tokio = "0.1.22"
 [dependencies.rocket_contrib]
 version = "0.4.2"
 default-features = false

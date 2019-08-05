@@ -1,6 +1,6 @@
 #![allow(dead_code, unused_variables, unused_imports)]
 #![feature(proc_macro_hygiene, decl_macro)]
-#![feature(try_trait, box_syntax)]
+#![feature(try_trait, box_syntax, async_await, test)]
 
 mod controller;
 mod core;

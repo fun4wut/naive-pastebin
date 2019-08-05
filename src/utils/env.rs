@@ -2,7 +2,7 @@
 //!
 //! MAX_POST_SIZE: 32 KB
 //!
-//! CLEAN_DURATION: 5000 ms
+//! CLEAN_DURATION: 60000 ms
 //!
 //! ADDR: localhost
 //!
@@ -33,7 +33,7 @@ fn parse<T: FromStr>(key: &'static str, default: T) -> T {
 lazy_static! {
     pub static ref MAX_STORE_SIZE: usize = { parse("PASTEBIN_MAX_STORE_SIZE", 100 * 1024 * 1024) };
     pub static ref MAX_POST_SIZE: usize = { parse("PASTEBIN_MAX_POST_SIZE", 32 * 1024) };
-    pub static ref CLEAN_DURATION: u64 = { parse("PASTEBIN_CLEAN_DURATION", 5000) };
+    pub static ref CLEAN_DURATION: u64 = { parse("PASTEBIN_CLEAN_DURATION", 60000) };
     pub static ref ADDR: String = { env::var("PASTEBIN_ADDR").unwrap_or(DEFAULT_ADDR.into()) };
     pub static ref PORT: u16 = { parse("PASTEBIN_PORT", 8085) };
     pub static ref CRYPT_KEY: String =
