@@ -20,21 +20,23 @@ $ ./target/release/naive-pastebin
 ```
 
 
+
 ### 环境变量
 
-Prefix: `PASTEBIN_`
+>  Prefix: `PASTEBIN_`
 
-Shared Variable
+#### Shared Variable
 
-| var           | default   | unit | description                     |
-| ------------- | --------- | ---- | ------------------------------- |
-| ADDR          | localhost |      | Binding address                 |
-| PORT          | 8085      |      | Binding port                    |
-| CRYPT_KEY     | fun4wut   |      | Crypto key for short url        |
-| MAX_POST_SIZE | 32768     | byte | Max length of POST request body |
-| DOMAIN        | $ADDR:$PORT |    | Domain Where you deploy
+| var           | default   | unit | description                       |
+| ------------- | --------- | ---- | --------------------------------- |
+| ADDR          | localhost |      | Binding address                   |
+| PORT          | 8085      |      | Binding port                      |
+| CRYPT_KEY     | fun4wut   |      | Crypto key for short url          |
+| MAX_POST_SIZE | 32768     | byte | Max length of POST request body   |
+| DOMAIN        | ADDR:PORT |      | Domain where you deploy your site |
+ 
 
-Built-in Memory Store
+#### Built-in Memory Store
 
 | var            | default   | unit        | description                                                 |
 | -------------- | --------- | ----------- | ----------------------------------------------------------- |
@@ -53,7 +55,7 @@ Built-in Memory Store
     ```http request
     POST /api/save?<title>&[exp]
     ```
-    > exp为过期时间，单位为秒，最长不超过7天，默认为7天
+    > exp为过期时间，单位为秒，默认为不过期
     
     ```typescript
     interface Request {
@@ -127,9 +129,9 @@ $ ab -n 13000 -c 50 -p `json_file` -T "application/json" http://localhost:8085/a
 - [x] 前端代码高亮
 - [x] `raw` 字符串显示
 - [x] 核心代码优化，减少 `clone` 造成的内存开销
-- [ ] 过期时间可为无限
+- [x] 过期时间可为无限
 - [ ] 数据备份【 `snapshot` / `log` 】
-- [ ] 冷数据存入硬盘
+- [x] 冷数据存入硬盘
 - [ ] 编辑/删除/回滚功能【使用一个密钥来验证，密钥只会在新建时出现，保存在浏览器 `localStorage` 中】
 - [ ] 历史版本显示
 

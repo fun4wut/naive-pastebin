@@ -95,7 +95,7 @@ impl<K, V> Store<K, V>
     /// 根据key来访问
     ///
     /// 刷新LRU
-    pub fn access<'b: 'a, 'a>(&'b mut self, key: K) -> Result<&'a StoreItem<V>, StoreError> {
+    pub fn access(&mut self, key: K) -> Result<&StoreItem<V>, StoreError> {
 //        let item = self.map.get_refresh(&key)?; // 获取item，更新LRU
 //        item.access_count += 1;
 //        Some(item)
