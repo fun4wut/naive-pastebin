@@ -1,5 +1,7 @@
 # 简易PASTEBIN服务
 
+**因为被 borrow checker 折磨，该项目就这样摸了**
+
 大致参考 <https://zhuanlan.zhihu.com/p/73961522>  这篇文章依样画葫芦。
 
 加了点注释，强化了封装。把 Web Server 换成了 `Rocket` 。
@@ -131,7 +133,7 @@ $ ab -n 13000 -c 50 -p `json_file` -T "application/json" http://localhost:8085/a
 - [x] 过期时间可为无限
 - [ ] 数据备份【 `snapshot` / `log` 】
 - [x] 冷数据存入硬盘
-- [ ] 硬盘写操作的异步化
+- [x] 硬盘写操作的异步化
 - [ ] 编辑/删除/回滚功能【使用一个密钥来验证，密钥只会在新建时出现，保存在浏览器 `localStorage` 中】
 - [ ] 历史版本显示
 
