@@ -42,16 +42,9 @@ impl<K, V> DiskStore<K, V>
         K: ToArray,
         V: Serialize + DeserializeOwned + WithDeadTime + Sync + Send + 'static,
 {
-    pub fn new() -> Self {
-        Self {
-            pd: PhantomData,
-            pd2: PhantomData,
-        }
-    }
-
     /// 异步写入磁盘
     /// 比同步方式，提升4倍速度
-    pub fn save_async(&self, stamp: K, item: V) -> Result<(), StoreError> {
+    pub fn save_async(stamp: K, item: V) -> Result<(), StoreError> {
         let key = enc_to_str(stamp);
         let path = format!("./data/{}/{}/", &key[..2], &key[2..4]);
         let fut = fs::create_dir_all(path.clone())
@@ -61,7 +54,7 @@ impl<K, V> DiskStore<K, V>
         Ok(tokio::run(fut))
     }
     /// 将item写入硬盘
-    pub fn save(&self, stamp: K, item: V) -> Result<(), StoreError> {
+    pub fn save(stamp: K, item: V) -> Result<(), StoreError> {
         let key = enc_to_str(stamp);
         let path = format!("./data/{}/{}/", &key[..2], &key[2..4]);
         create_dir_all(&path)?;
@@ -71,7 +64,7 @@ impl<K, V> DiskStore<K, V>
     }
 
     /// 将item从硬盘中导出
-    pub fn find(&self, stamp: K) -> Result<V, StoreError> {
+    pub fn find(stamp: K) -> Result<V, StoreError> {
         let key = enc_to_str(stamp);
         let path = format!("./data/{}/{}/{}", &key[..2], &key[2..4], &key);
         // 有该item

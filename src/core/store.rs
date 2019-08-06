@@ -8,13 +8,13 @@ use serde::Serialize;
 use std::collections::btree_map::Entry;
 use std::collections::BTreeMap;
 use std::hash::Hash;
-
+use std::thread;
 /// 存储结构
 ///
 /// Value需要实现两个Trait
 pub struct Store<K, V>
     where
-        K: Copy + Hash + Eq + ToArray,
+        K: Copy + Hash + Eq + ToArray + Send + Sync + 'static,
         V: LruValueSize + WithDeadTime + Serialize + DeserializeOwned + Send + Sync + 'static,
 {
     /// 记录（K，V）
@@ -22,8 +22,6 @@ pub struct Store<K, V>
     /// 过期检测与删除
     queue: BTreeMap<NanoTime, K>,
 
-    /// 硬盘管理
-    disk: DiskStore<K, V>,
     /// 当前的容量
     total_value_size: usize,
     /// 最大容量
@@ -32,7 +30,7 @@ pub struct Store<K, V>
 
 impl<K, V> Store<K, V>
     where
-        K: Copy + Hash + Eq + ToArray,
+        K: Copy + Hash + Eq + ToArray + Send + Sync + 'static,
         V: LruValueSize + WithDeadTime + Serialize + DeserializeOwned + Send + Sync + 'static,
 {
     /// 构造一个Store实例
@@ -40,7 +38,6 @@ impl<K, V> Store<K, V>
         Self {
             map: LinkedHashMap::new(),
             queue: BTreeMap::new(),
-            disk: DiskStore::new(),
             total_value_size: 0,
             max_value_size,
         }
@@ -64,8 +61,12 @@ impl<K, V> Store<K, V>
                 if let Some(tmp_dead_time) = it.value.dead_time() {
                     self.queue.remove(&tmp_dead_time);
                 }
+                thread::spawn(move || {
+                    // 多线程方式读写硬盘
+                    DiskStore::save(stamp, it.value)
+                });
+//                DiskStore::save_async(stamp, it.value)?;
 
-                self.disk.save_async(stamp, it.value)?;
             }
         }
         self.total_value_size += item.size;
@@ -110,7 +111,7 @@ impl<K, V> Store<K, V>
             item.access_count += 1;
             Ok(item)
         } else {
-            let rec = self.disk.find(key)?;
+            let rec = DiskStore::find(key)?;
             self.save(key, rec)?;
             Ok(self.map.get(&key)?)
         }
